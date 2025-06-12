@@ -27,6 +27,7 @@ interface AuthResult {
   user?: string;
   error?: string;
   data?: UserType | AgentConfigurationType;
+  message?: string; // Add message to AuthResult for success feedback
 }
 
 export async function registerUser(userData: UserType): Promise<AuthResult> {
@@ -63,6 +64,55 @@ export async function loginUser(email: string, password: string): Promise<AuthRe
   } catch (error: any) {
     console.error('Server Action - Login error:', error);
     return { success: false, error: 'Login failed: ' + error.message };
+  }
+}
+
+// NEW: Forgot Password Server Action
+export async function forgotPassword(email: string): Promise<AuthResult> {
+  await dbConnect();
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      // For security, always return a generic success message to prevent
+      // user enumeration (revealing whether an email exists or not).
+      console.warn(`Forgot password request for non-existent email: ${email}`);
+      return { success: true, message: 'If an account with that email exists, a password reset link has been sent.' };
+    }
+
+    // --- REAL-WORLD IMPLEMENTATION STEPS (SIMULATED FOR NOW) ---
+    // In a real application, you would do the following:
+    // 1. Generate a unique, cryptographically secure, and time-limited reset token.
+    //    Example: import crypto from 'crypto';
+    //    const resetToken = crypto.randomBytes(32).toString('hex');
+    //    const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+
+    // 2. Save this token and its expiry to the user's document in MongoDB.
+    //    user.resetPasswordToken = resetToken;
+    //    user.resetPasswordExpires = resetTokenExpiry;
+    //    await user.save();
+
+    // 3. Construct the full password reset URL that the user will click.
+    //    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${resetToken}`;
+    //    (You'd need to define NEXT_PUBLIC_APP_URL in your .env.local for deployment)
+
+    // 4. Send an email to the user with the reset link.
+    //    This requires an email sending service (e.g., Nodemailer, SendGrid, Mailgun).
+    //    Example:
+    //    import { sendEmail } from '@/lib/emailService'; // You'd create this utility
+    //    await sendEmail({
+    //      to: email,
+    //      subject: 'PROPAL AI Password Reset Request',
+    //      html: `<p>You requested a password reset. Click this link: <a href="${resetLink}">Reset Password</a></p>`
+    //    });
+    console.log(`[ACTION] Simulating sending password reset email to: ${email}`);
+    // --- END REAL-WORLD IMPLEMENTATION STEPS ---
+
+    return { success: true, message: 'If an account with that email exists, a password reset link has been sent.' };
+
+  } catch (error: any) {
+    console.error('Server Action - Forgot Password error:', error);
+    return { success: false, error: 'Failed to process forgot password request: ' + error.message };
   }
 }
 
