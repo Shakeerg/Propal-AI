@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Root Variables --- */
+:root {
+  --ui-bg-primary: #f9fafb; /* Light mode background */
+  --ui-bg-dark: #000000;    /* Pure black for main dark mode background */
+  --ui-bg-sidebar: #2d3748; /* Dark charcoal for subtle distinction from main black in dark mode, and for light mode sidebar */
+  --ui-text-primary: #1a202c; /* Dark text for light mode */
+  --ui-text-light: #e2e8f0;   /* Light text for dark mode */
+  --ui-border-color: #e2e8f0; /* Light border in light mode */
+  --ui-accent: #3182ce;
+  --ui-green-accent: #32CD32;
+}
+
+/* === Base === */
+html {
+  /* No direct background-color here, rely on body/layout for primary background */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html.dark {
+  /* No direct background-color here, rely on body/layout for primary background */
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: theme('fontFamily.sans');
+  /* Set initial background for body (useful as fallback) */
+  background-color: var(--ui-bg-primary);
+  color: var(--ui-text-primary);
+  transition: color 0.3s ease, background-color 0.3s ease;
+  min-height: 100vh;
+  line-height: 1.5;
+  font-feature-settings: "kern";
+}
+
+/* Apply dark mode styles to body when html has dark class */
+html.dark body {
+  background-color: var(--ui-bg-dark); /* Ensure body picks up dark background */
+  color: var(--ui-text-light);
+}
+
+/* Removed fixed styles, letting Tailwind classes in component handle it */
+/* .sidebar { @apply ... } */
+/* .sidebar-nav { @apply ... } */
+/* .sidebar-nav a { @apply ... } */
+/* .sidebar-nav a.active { @apply ... } */
+/* .signed-in { @apply ... } */
+/* .sidebar-actions { @apply ... } */
+/* .sidebar-actions button { @apply ... } */
+/* .dark-mode-toggle { @apply ... } */
+/* .logout-button { @apply ... } */
+
+
+/* === Links === */
+a {
+  @apply text-blue-600 dark:text-blue-400 hover:underline transition-colors duration-200;
+}
+
+/* === Forms === */
+input,
+textarea,
+select,
+button {
+  @apply focus:outline-none transition-all duration-200;
+  font-family: inherit; /* Ensure form elements inherit font */
+}
+
+button {
+  @apply cursor-pointer font-medium;
+}
+
+/* === Labels === */
+label {
+  @apply text-sm font-medium text-gray-700 dark:text-gray-300;
+}
+
+/* === Custom Select === */
+@layer utilities {
+  select {
+    /* Base styles from component, but ensure this handles the dropdown arrow color for dark mode */
+    appearance: none;
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    /* Light mode arrow (dark stroke) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%231a202c'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  }
+
+  /* Dark mode arrow for select (light stroke) */
+  html.dark select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23e2e8f0'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  }
+
+
+  select option {
+    /* These styles apply to the options within the dropdown */
+    /* Ensure they are correctly styled based on the parent select's theme */
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 !important;
+  }
+
+  select:focus {
+    @apply ring-2 ring-blue-500 dark:ring-blue-400 border-transparent;
+  }
+
+  select option:hover {
+    @apply bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100;
+  }
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 116, 139, 0.5); /* Gray for light mode */
+  border-radius: 8px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2); /* Lighter gray for dark mode */
+}
+
+/* === Selection === */
+::selection {
+  background-color: var(--ui-accent);
+  color: white;
+}
+
+/* === Fade Animation === */
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out forwards; /* Use forwards to keep the end state */
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
